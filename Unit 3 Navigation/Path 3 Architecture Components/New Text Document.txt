@@ -1,0 +1,42 @@
+1. Giới thiệu về App Architecture
+- Architecture giúp phân bổ trách nhiệm trong App giữa các Class. 
+- Một Well-Design App Architecture giúp mở rộng app và dễ dàng collabration với Team.
+- Architecture Principle: "Tách model ra khỏi UI".
+* "Separation of concerns": App nên được chia ra thành nhiều Class, mỗi class chịu trách nhiệm riêng biệt.
+2. Model là gì?
+- Model là thành phần chịu trách nhiệm xử lý data in App
+- Model tách biệt khỏi View và và App Component, nên nó không bị ảnh hưởng bởi LifeCircle in App.
+3. Android Architecture
+- The main classes or Components in Andorid Architecture là UI Controller (Activity, Fragment), ViewModel,
+LiveData, Room. Những Component này xử lý vấn đề phức tạp về LifeCircle giúp tránh các vấn đề liên quan đến LifeCircle.
+- Diagram: UI Controller <- Hiển thị dữ liệu và bắt sự kiện người dùng
+                ↓
+            ViewModel    <- Nắm dữ các dữ liệu cho UI và chuẩn bị để hiển thị
+4. UI Controller.
+- Activities và Fragment là UI Controller. 
+- UI Controller điều khiển UI bằng cách nào?
+    + Vẽ view on Screen, capturing user event, mọi thứ liên quan đến UI mà user interacts
+- Dữ liệu của ứng dụng và xử lý logic không được nằm trong UI Controller Classes. Bởi vì Ta không thể controll những event này.
+Andorid System có thể destroy UI Controller bất cứ lúc nào dựa vào user interacts or do system condition như low memory.
+=> Ta nên lưu data và xử lý logic trong ViewModel.
+5. View Model
+- ViewModel là model chứa data, data này sẽ được hiển thị trên view.
+- ViewModel lưu trữ data, data này không bị destroy khi Activity or Fragment bị destroyed or recreated bởi Android Framework.
+6. Add ViewModel
+    Add Liblary
+- Build.Gradle App: 
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
+- Tạo một Class kế thừa ViewModel.
+    class GameViewModel : ViewModel() {}
+- Tại sao phải kế thừa ViewModel vì ViewModel là Abstract Class.
+7. Attach (Gắn) View Model đến Fragment (UI Controller)
+- Để liên kết ViewModel đến UI Controller -> Tạo 1 Object ViewModel bên trong UI Controller.
+8. Kotlin Property Delegate
+- In Kotlin, mutable (var) Property mặc định có getter và setter function.
+- Immutable (val) Property mặc định có getter function.
+- Property delegation in Kotlin giúp chuyển function getter-setter đến 1 Class khác.
+9. Backing Property
+- Backing Property cho phép trả về giá trị từ getter
+    private var _count = 0 
+    val count: Int get() = _count
+10. The LifeCircle Of a ViewModel
