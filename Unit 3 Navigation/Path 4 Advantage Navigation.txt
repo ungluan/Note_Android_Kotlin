@@ -1,115 +1,19 @@
-1. Giới thiệu về App Architecture
-- Architecture giúp phân bổ trách nhiệm trong App giữa các Class. 
-- Một Well-Design App Architecture giúp mở rộng app và dễ dàng collabration với Team.
-- Architecture Principle: "Tách model ra khỏi UI".
-* "Separation of concerns": App nên được chia ra thành nhiều Class, mỗi class chịu trách nhiệm riêng biệt.
+I. Các phần kiến thức:
+1. Sử dụng Activity
+2. Fragment.
+3. Intents.
+4. DataBinding
+5. Navigation components.
+6. Basic of Architecture Component.
 
-2. Model là gì?
-- Model là thành phần chịu trách nhiệm xử lý data in App
-- Model tách biệt khỏi View và và App Component, nên nó không bị ảnh hưởng bởi LifeCircle in App.
 
-3. Android Architecture
-- The main classes or Components in Andorid Architecture là UI Controller (Activity, Fragment), ViewModel,
-LiveData, Room. Những Component này xử lý vấn đề phức tạp về LifeCircle giúp tránh các vấn đề liên quan đến LifeCircle.
-- Diagram: UI Controller <- Hiển thị dữ liệu và bắt sự kiện người dùng
-                ↓
-            ViewModel    <- Nắm dữ các dữ liệu cho UI và chuẩn bị để hiển thị
+II. Câu hỏi đặt ra trong các Folder
+1. app:defaultNavHost làm cái gì?
+2. app:navGraph làm cái gì?
+3. android:layoutGravity làm cái gì?
+4. tools:text làm cái gì?
+5. file dimems làm cái gì?
 
-4. UI Controller.
-- Activities và Fragment là UI Controller. 
-- UI Controller điều khiển UI bằng cách nào?
-    + Vẽ view on Screen, capturing user event, mọi thứ liên quan đến UI mà user interacts
-- Dữ liệu của ứng dụng và xử lý logic không được nằm trong UI Controller Classes. Bởi vì Ta không thể controll những event này.
-Andorid System có thể destroy UI Controller bất cứ lúc nào dựa vào user interacts or do system condition như low memory.
-=> Ta nên lưu data và xử lý logic trong ViewModel.
 
-5. View Model
-- ViewModel là model chứa data, data này sẽ được hiển thị trên view.
-- ViewModel lưu trữ data, data này không bị destroy khi Activity or Fragment bị destroyed or recreated bởi Android Framework.
-
-6. Add ViewModel
-    Add Liblary
-- Build.Gradle App: 
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
-- Tạo một Class kế thừa ViewModel.
-    class GameViewModel : ViewModel() {}
-- Tại sao phải kế thừa ViewModel vì ViewModel là Abstract Class.
-
-7. Attach (Gắn) View Model đến Fragment (UI Controller)
-- Để liên kết ViewModel đến UI Controller -> Tạo 1 Object ViewModel bên trong UI Controller.
-
-8. Kotlin Property Delegate
-- In Kotlin, mutable (var) Property mặc định có getter và setter function.
-- Immutable (val) Property mặc định có getter function.
-- Property delegation in Kotlin giúp chuyển function getter-setter đến 1 Class khác.
-
-9. Backing Property
-- Backing Property cho phép trả về giá trị từ getter
-    private var _count = 0 
-    val count: Int get() = _count
-10. The LifeCircle Of a ViewModel
-11. Alert Dialog
-=============
-
-12. LiveData
-- LiveData nắm dữ data. Bản chất LiveData là 1 wrapper, bên trong là bất kì kiểu dữ liệu nào
-- LiveData có khả năng quan sát. Nghĩa là khi data bên trong đối tượng LiveData thay đổi thì observer sẽ được
-thông báo.
-- LiveData là lifecycle-aware. Khi gán 1 Observer đến LiveData thì Observer sẽ được liên kết với LifeCircleOwner
-(thường là Activity or Fragment).
-- LiveData chỉ được update khi lifecycle-state là STARTED OR RESUMED
-==> Nhờ có LiveData ta không cần phải gọi lại các function update UI ở nhiều nơi. Ta chỉ cần làm 1 lần duy
-nhất trong Observer.
-
-13. MutableLiveData
-- MutableLiveData là data được lưu trữ bên trong LiveData có thể được thay đổi.
-- MutableLiveData là GenericClass vì vậy ta cần phải định nghĩa type data cụ thể MutableLiveData<TYPE_DATA>.
-- GenericClass là Class ta định nghĩa nó theo 1 cách chung chung.
-
-14. Observer
-- Gắn Observer để quan sát khi dữ liệu thay đổi thì sẽ tự động update UI (Observer sẽ kích hoạt khi dữ liệu
-thay đổi trong ViewModel).
-    viewModel.currentScrambleWord.observer(viewLifeCircleOwner,{newData -> use newData to updateUI})
-
-15. ViewBinding
-- ViewBinding là 1 Feature, cho phép bạn truy cập vào view trong code. (Ở trong UI Controller ta gán dữ liệu bằng
-cách truy cập vào Property của UI Component)
-    EXAMPLE: binding.score.text = "DATA_INPUT"
-- ViewBinding là liên kết 1 chiều: view -> code, (View được tham chiếu trong code bằng cách sử dụng generated 
-binding class) nhưng không thể ngược lại. Để khắc phục điều này ta sử dụng DataBinding. 
-- ViewBinding Class tự tạo ra trong mỗi file XML, 1 instance of a binding class chứa các tham chiếu trực tiếp
-đến all views (Views là những component có ID tương ứng trong layout)
-
-16. DataBinding
-- DataBinding liên kết UI Components in your layout to DataSource in your app sử dụng declarative format
-- Sử dụng LiveData + DataBinding để khi data trong LiveData thay đổi, Observer sẽ thông báo đến layout và
-tự động cập nhật ngay bên trong layout.
-- DataBinding = binding data (from code) to views ("Gọi code ngay bên trong views") + LiveData (binding views to code)
-- Apps can listen to the LiveData changes from the layout using Data Binding and binding expressions.
-
-17. Lợi thế của việc sử dụng data binding
-- Rút gọn code bởi vì layout tự động update UI khi data trong LiveData thay đổi vì thế ta không cần phải gọi lại
-các dòng code cập nhật UI.
-- Đơn giản hóa dễ dàng bảo trì.
-- Tăng Performence, tránh memory leaks, null pointer exception.
-
-18. Memory Leak (rò rỉ bộ nhớ)
-- Memory Leak xảy ra khi ta vẫn giữ 1 tham chiếu đến đối tượng, sau khi đối tượng đã hoàn thành hết nhiệm vụ của nó.
-?Điều gì xảy ra trong 1 Memory Leak
-- Khi ứng dụng của bạn được sử dụng, bộ nhớ HEAP sẽ ngày càng tăng lên, một Garbage Collector nhỏ sẽ được kích
-hoạt và cố gắng làm sạch những Object không còn được sử dụng nữa. Các Garbage Collector chạy đồng thời và chúng
-không làm chậm ứng dụng 1 cách đáng kể. Nhưng càng ít garbage collector thì hiệu xuất của APP càng tốt.
-- Khi ứng dụng bị Memory Leak nghiêm trọng thì các GC nhỏ không thể thu hồi bộ nhớ được -> bộ nhớ HEAP sẽ bắt 
-buộc kích hoạt các GC lớn hơn được gọi là "stop-the-world" -> Tạm dừng toàn bộ main thread của ứng dụng 50-100 ms.
-Tại thời điểm này ứng dụng của bạn trễ và hầu như không sử dụng được.
-- Nếu vẫn đề không được giải quyết, bộ nhớ HEAP của APP sẽ tăng liên tục cho đến khi không còn bộ nhớ để phân bổ
-ứng dụng -> xảy ra outOfMemoryError -> ứng dụng bị CRASH.
-
-19. Null Pointer Exception 
-- Lỗi này xảy ra khi chương trình cố gắng tham chiếu tới đối tượng, nhưng nó không có vị trị nào trên bộ nhớ, tức
-là nó có giá trị NULL.
-
-20. Binding Expressions
-- Được viết bên trong layout in the attribute properties(như là android:text) tham chiếu đến layout properties.
-- Khi biến phụ thuộc bị thay đổi thì "DB Library" sẽ run Binding Expressions (do đó nó update Views).
-
+III. Advantage Navigation Components
+1. DateFormatter.
